@@ -1,0 +1,17 @@
+h1 {
+    font-family: "Helvetica", sans-serif;
+    font-style: bold;
+    text-align: center;
+}
+
+#container {
+    margin: 0 auto;
+    width: 80%;
+    text-align: center;
+}
+
+#animal-img {
+    border: 5px solid green;
+    background-color: green;
+    border-radius: 10px;
+}
