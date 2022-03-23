@@ -51,7 +51,20 @@ function generateRandomAnimal() {
 }
 
 function onLoad() {
-    var animal = generateRandomAnimal();
+    // get existing saved animals 
+    var animal = JSON.parse(localStorage.getItem("savedAnimal"));
+    
+    // generate new animal if no saved animals exist
+    var hasSavedAnimal = false;
+    if (animal == null) {
+        document.getElementById("button-store").textContent = "Save Me";
+        animal = generateRandomAnimal();
+    } else {
+        document.getElementById("button-store").textContent = "Clear Me";
+        hasSavedAnimal = true;
+    }
+
+    // display animal properties and image
     if (animal.age == 1) {
         document.getElementById("animal-properties").textContent = 
         animal.name + " is " + animal.age + " year old";
@@ -59,8 +72,22 @@ function onLoad() {
         document.getElementById("animal-properties").textContent = 
         animal.name + " is " + animal.age + " years old";
     }
-    
     let imageTag = document.getElementById("animal-img");
     imageTag.setAttribute("src", animal.image);
     imageTag.setAttribute("alt", animal.image_alt);
+
+    // clear and saved animals on button click 
+    document.getElementById("button-store").addEventListener("click", function() {
+        if (hasSavedAnimal) {
+            localStorage.removeItem("savedAnimal");
+            document.getElementById("button-store").style.display = "none";
+            document.getElementById("button-feedback").textContent = "Cleared";
+            document.getElementById("button-feedback").style.display = "block";
+        } else {
+            localStorage.setItem("savedAnimal", JSON.stringify(animal));
+            document.getElementById("button-store").style.display = "none";
+            document.getElementById("button-feedback").textContent = "Saved";
+            document.getElementById("button-feedback").style.display = "block";
+        }
+    });
   }
