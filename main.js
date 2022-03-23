@@ -51,43 +51,56 @@ function generateRandomAnimal() {
 }
 
 function onLoad() {
-    // get existing saved animals 
-    var animal = JSON.parse(localStorage.getItem("savedAnimal"));
-    
-    // generate new animal if no saved animals exist
+
+    // Get stored animals if they exist
+    var animals = JSON.parse(localStorage.getItem("animals"));
     var hasSavedAnimal = false;
-    if (animal == null) {
+    var animal = generateRandomAnimal();
+
+    // Let user save new animal if there are less than 5 saved
+    if (animals.length < 5) {
         document.getElementById("button-store").textContent = "Save Me";
-        animal = generateRandomAnimal();
-    } else {
+    } else { // Let user clear the last animal saved 
         document.getElementById("button-store").textContent = "Clear Me";
         hasSavedAnimal = true;
     }
 
-    // display animal properties and image
-    if (animal.age == 1) {
-        document.getElementById("animal-properties").textContent = 
-        animal.name + " is " + animal.age + " year old";
-    } else {
-        document.getElementById("animal-properties").textContent = 
-        animal.name + " is " + animal.age + " years old";
-    }
-    let imageTag = document.getElementById("animal-img");
-    imageTag.setAttribute("src", animal.image);
-    imageTag.setAttribute("alt", animal.image_alt);
+    // TO-DO...change this to be more like the grocery list code 
 
-    // clear and saved animals on button click 
+    // Display animal to save
+    var displayAnimal;
+    if (animals.length == 5) {
+        displayAnimal = animals[animals.length - 1];
+    } else {
+        displayAnimal = animal;
+    }
+
+    document.getElementById("animal-properties").innerHTML = displayAnimal.name;
+        let imageTag = document.getElementById("animal-img");
+        imageTag.setAttribute("src", displayAnimal.image);
+        imageTag.setAttribute("alt", displayAnimal.image_alt);
+
+    // Display all animals in storage
+    var animalNames = animals.reduce(function (result, name, index) {
+        var number = index + 1;
+        return result + " " + number + ". " + name.name + "<br>";
+    }, "");
+    document.getElementById("saved-animals").innerHTML = animalNames;
+
+    // Clear and save animals on click 
     document.getElementById("button-store").addEventListener("click", function() {
-        if (hasSavedAnimal) {
-            localStorage.removeItem("savedAnimal");
+        if (hasSavedAnimal) { // Clear last animal
+            animals.pop();
+            localStorage.setItem("animals", JSON.stringify(animals));
             document.getElementById("button-store").style.display = "none";
             document.getElementById("button-feedback").textContent = "Cleared";
             document.getElementById("button-feedback").style.display = "block";
-        } else {
-            localStorage.setItem("savedAnimal", JSON.stringify(animal));
+        } else { // Save animal
+            animals.push(animal);
+            localStorage.setItem("animals", JSON.stringify(animals));
             document.getElementById("button-store").style.display = "none";
             document.getElementById("button-feedback").textContent = "Saved";
             document.getElementById("button-feedback").style.display = "block";
         }
     });
-  }
+}
